@@ -457,20 +457,35 @@ def scrappers(link):
         return gd_txt
     
     elif 'toonworld4all' in link:
-        response = requests.get(link)
-        soup = BeautifulSoup(response.content, 'html.parser')
-        links = soup.select('a[href*="redirect/main.php?"]')
-        for a in links:
-            down = requests.get(a['href'], stream=True, allow_redirects=False)
-            link = down.headers["location"]
-            glink = rocklinks(link)
-            if glink and "gdtot" in glink:
-                t = requests.get(glink)
-                soupt = BeautifulSoup(t.content, "html.parser")
-                title = soupt.select('meta[property^="og:description"]')
-                no += 1
-                gd_txt += f"{no}. {(title[0]['content']).replace('Download ' , '')}\n{glink}\n\n"
-        return gd_txt
+       client = requests.session()
+       r = client.get(url).text
+       soup = BeautifulSoup (r, "html.parser")
+       for a in soup.find_all("a"):
+           c= a.get("href")
+           if "redirect/main.php?" in c:
+               download = get(c, stream=True, allow_redirects=False)
+               v = download.headers["location"]
+               client = cloudscraper.create_scraper(allow_brotli=False)
+               DOMAIN = "https://share.techymedies.com"
+               code = v.split("/")[-1]
+               final_url = f"{DOMAIN}/{code}"
+               ref = "https://disheye.com/"
+               h = {"referer": ref}
+               resp = client.get(final_url, headers=h)
+               soup = BeautifulSoup(resp.content, "html.parser")
+               inputs = soup.find(id="go-link").find_all(name="input")
+               data = { input.get('name'): input.get('value') for input in inputs }
+               h = { "x-requested-with": "XMLHttpRequest" }
+               time.sleep(5)
+               r = client.post(f"{DOMAIN}/links/go", data=data, headers=h)
+               return r.json()['url']
+               if "gdtot" in g:
+                   t = client.get(g).text
+                   soupt = BeautifulSoup(t, "html.parser")
+                   title = soupt.title
+                   gd_txt = f"{(title.text).replace('GDToT | ' , '')}\n{g}\n\n"
+               return gd_txt
+
 
     elif "animeremux" in link:
         gd_txt, no = "", 0
