@@ -82,7 +82,7 @@ def handle_force_sub(bot: Client, cmd: Message):
                 "Sorry, You are Banned to use me. Contact my [Support Group](https://t.me/greymatters_bots_discussion).",
                 disable_web_page_preview=True,
             )
-            return 0
+         
     except UserNotParticipant:
         try:
              cmd.reply_text(
