@@ -45,7 +45,6 @@ async def handle_force_sub(bot: Client, cmd: Message):
                     ],
                 ]),
             )
-            return 0
 # handle ineex
 def handleIndex(ele,message,msg):
     result = bypasser.scrapeIndex(ele)
