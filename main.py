@@ -18,7 +18,34 @@ api_hash = os.environ.get("HASH", "")
 api_id = os.environ.get("ID", "")
 app = Client("my_bot",api_id=api_id, api_hash=api_hash,bot_token=bot_token)  
 
-
+# force sub
+async def handle_force_sub(bot: Client, cmd: Message):
+    try:
+        user = await bot.get_chat_member(chat_id=channel_id,
+                                         user_id=cmd.from_user.id)
+        if user.status in (ChatMemberStatus.BANNED,
+                           ChatMemberStatus.RESTRICTED):
+            await cmd.reply_text(
+                text=
+                "Sorry, You are Banned to use me. Contact my [Support Group](https://t.me/greymatters_bots_discussion).",
+                disable_web_page_preview=True,
+            )
+            return 0
+    except UserNotParticipant:
+        try:
+            await cmd.reply_text(
+                text="**Please Join My Updates Channel to use me!**\n\n"
+                "Due to Overload, Only Channel Subscribers can use the Bot!",
+                reply_markup=InlineKeyboardMarkup([
+                    [
+                        InlineKeyboardButton(
+                            "🤖 Join Updates Channel",
+                            url="t.me/GreyMatter_Bots",
+                        )
+                    ],
+                ]),
+            )
+            return 0
 # handle ineex
 def handleIndex(ele,message,msg):
     result = bypasser.scrapeIndex(ele)
