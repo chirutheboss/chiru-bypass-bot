@@ -458,12 +458,12 @@ def scrappers(link):
     
     elif 'toonworld4all' in link:
        client = requests.session()
-       r = client.get(link).text
+       r = client.rget(link).text
        soup = BeautifulSoup (r, "html.parser")
        for a in soup.find_all("a"):
-           c= a.get("href")
+           c= a.rget("href")
            if "redirect/main.php?" in c:
-               download = get(c, stream=True, allow_redirects=False)
+               download = rget(c, stream=True, allow_redirects=False)
                v = download.headers["location"]
                client = cloudscraper.create_scraper(allow_brotli=False)
                DOMAIN = "https://share.techymedies.com"
@@ -471,7 +471,7 @@ def scrappers(link):
                final_url = f"{DOMAIN}/{code}"
                ref = "https://disheye.com/"
                h = {"referer": ref}
-               resp = client.get(final_url, headers=h)
+               resp = client.rget(final_url, headers=h)
                soup = BeautifulSoup(resp.content, "html.parser")
                inputs = soup.find(id="go-link").find_all(name="input")
                data = { input.get('name'): input.get('value') for input in inputs }
@@ -480,7 +480,7 @@ def scrappers(link):
                r = client.post(f"{DOMAIN}/links/go", data=data, headers=h)
                return r.json()['url']
                if "gdtot" in g:
-                   t = client.get(g).text
+                   t = client.rget(g).text
                    soupt = BeautifulSoup(t, "html.parser")
                    title = soupt.title
                    gd_txt = f"{(title.text).replace('GDToT | ' , '')}\n{g}\n\n"
