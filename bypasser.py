@@ -457,7 +457,7 @@ def scrappers(link):
         return gd_txt
     
     elif 'toonworld4all' in link:
-        response = requests.get(url)
+        response = requests.get(link)
         soup = BeautifulSoup(response.content, 'html.parser')
         links = soup.select('a[href*="redirect/main.php?"]')
         for a in links:
