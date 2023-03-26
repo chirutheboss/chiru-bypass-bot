@@ -64,35 +64,7 @@ def loopthread(message):
             try: app.delete_messages(message.chat.id, msg.id)
             except: pass
             app.send_message(message.chat.id, "__Failed to Bypass__")
-# force sub
-async def handle_force_sub(bot: Client, cmd: Message):
-    try:
-        user = await bot.get_chat_member(chat_id=channel_id,
-                                         user_id=cmd.from_user.id)
-        if user.status in (ChatMemberStatus.BANNED,
-                           ChatMemberStatus.RESTRICTED):
-            await cmd.reply_text(
-                text=
-                "Sorry, You are Banned to use me. Contact my [Support Group](https://t.me/greymatters_bots_discussion).",
-                disable_web_page_preview=True,
-            )
-            return 0
-    except UserNotParticipant:
-        try:
-            await cmd.reply_text(
-                text="**Please Join My Updates Channel to use me!**\n\n"
-                "Due to Overload, Only Channel Subscribers can use the Bot!",
-                reply_markup=InlineKeyboardMarkup([
-                    [
-                        InlineKeyboardButton(
-                            "🤖 Join Updates Channel",
-                            url="t.me/GreyMatter_Bots",
-                        )
-                    ],
-                ]),
-            )
             
-
 # start command
 @app.on_message(filters.command(["start"]))
 def send_start(client: pyrogram.client.Client, message: pyrogram.types.messages_and_media.message.Message):
