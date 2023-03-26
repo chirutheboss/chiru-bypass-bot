@@ -458,7 +458,7 @@ def scrappers(link):
     
     elif 'toonworld4all' in link:
        client = requests.session()
-       r = client.get(url).text
+       r = client.get(link).text
        soup = BeautifulSoup (r, "html.parser")
        for a in soup.find_all("a"):
            c= a.get("href")
