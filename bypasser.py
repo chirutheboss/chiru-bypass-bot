@@ -457,32 +457,20 @@ def scrappers(link):
             gd_txt += f"{no}. {(title[0]['content']).replace('Download ' , '')}\n{glink}\n\n"
         return gd_txt
     
-    elif "toonworld4all" in link:
-        gd_txt, no = "", 0
-        options = webdriver.ChromeOptions()
-        options.add_argument("--headless")
-        options.add_argument("--disable-gpu")
-        driver = webdriver.Chrome(options=options)
-        try:
-            driver.get(link)
-            html = driver.page_source
-            soup = BeautifulSoup(html, "html.parser")
-            links = soup.select('a[href*="redirect/main.php?"]')
-            for a in links:
-                down = rget(a["href"], stream=True, allow_redirects=False)
-                link = down.headers["location"]
-                glink = rocklinks(link)
-                if glink and "gdtot" in glink:
-                    t = rget(glink)
-                    soupt = BeautifulSoup(t.text, "html.parser")
-                    title = soupt.select('meta[property^="og:description"]')
-                    no += 1
-                    gd_txt += f"{no}. {(title[0]['content']).replace('Download ' , '')}\n{glink}\n\n"
-        except:
-            print("Failed to scrape toonworld4all.me")
-            gd_txt = ""
-        finally:
-            driver.quit()
+    elif 'toonworld4all' in link:
+        response = requests.get(url)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        links = soup.select('a[href*="redirect/main.php?"]')
+        for a in links:
+            down = requests.get(a['href'], stream=True, allow_redirects=False)
+            link = down.headers["location"]
+            glink = rocklinks(link)
+            if glink and "gdtot" in glink:
+                t = requests.get(glink)
+                soupt = BeautifulSoup(t.content, "html.parser")
+                title = soupt.select('meta[property^="og:description"]')
+                no += 1
+                gd_txt += f"{no}. {(title[0]['content']).replace('Download ' , '')}\n{glink}\n\n"
         return gd_txt
 
     elif "animeremux" in link:
