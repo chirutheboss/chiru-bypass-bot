@@ -478,12 +478,12 @@ def scrappers(link):
                     title = soupt.select('meta[property^="og:description"]')
                     no += 1
                     gd_txt += f"{no}. {(title[0]['content']).replace('Download ' , '')}\n{glink}\n\n"
-    except:
-        print("Failed to scrape toonworld4all.me")
-        gd_txt = ""
-    finally:
-        driver.quit()
-    return gd_txt
+        except:
+            print("Failed to scrape toonworld4all.me")
+            gd_txt = ""
+        finally:
+            driver.quit()
+        return gd_txt
 
     elif "animeremux" in link:
         gd_txt, no = "", 0
