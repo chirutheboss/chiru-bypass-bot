@@ -97,7 +97,7 @@ def handle_force_sub(bot: Client, cmd: Message):
                     ],
                 ]),
             )
-            return 0
+       
 
 # help command
 @app.on_message(filters.command(["help"]))
