@@ -15,7 +15,6 @@ load_dotenv()
 from asyncio import sleep as asleep
 import os
 import ddl
-from selenium import webdriver
 
 
 ##########################################################
