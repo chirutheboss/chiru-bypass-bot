@@ -1208,14 +1208,20 @@ def gdtot(url: str, GdTot_Crypt: str) -> str:
     res = client.get(url)
     base_url = re.match('^.+?[^\/:](?=[?\/]|$\n)', url).group(0)
     res = client.get(f"{base_url}/dld?id={url.split('/')[-1]}")
-    url = re.findall(r'URL=(.*?)"', res.text)[0]
-    params = parse_qs(urlparse(url).query)
-    if "gd" not in params or not params["gd"] or params["gd"][0] == "false":
-        return "Invalid link"
+    url = re.findall(r'[uU][rR][lL]=(.*?)"', res.text)
+    info = {}
+    info["error"] = False
+    if url:
+        decoded_id = base64.b64decode(str(url[0])).decode("utf-8")
+        drive_link = f"https://drive.google.com/open?id={decoded_id}"
+        info["gdrive_link"] = drive_link
     else:
-        decoded_id = base64.b64decode(str(params["gd"][0])).decode("utf-8")
-        drive_link = f"https://drive.google.com/uc?id={decoded_id}&export=download"
-        return drive_link
+        info["error"] = True
+        info["message"] = "Invalid link"
+    if not info["error"]: 
+        return info["gdrive_link"]
+    else: 
+        return ddl.gdtot(url)
 
 
 ##################################################################
