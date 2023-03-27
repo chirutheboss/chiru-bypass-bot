@@ -70,34 +70,7 @@ def loopthread(message):
 def send_start(client: pyrogram.client.Client, message: pyrogram.types.messages_and_media.message.Message):
     app.send_message(message.chat.id, f"__👋 Hi **{message.from_user.mention}**, i am Link Bypasser Bot, just send me any supported links and i will you get you results.\nCheckout /help to Read More__",
     reply_markup=InlineKeyboardMarkup([[ InlineKeyboardButton("🌐 Source Code", url="https://github.com/bipinkrish/Link-Bypasser-Bot")]]), reply_to_message_id=message.id)
-
-def handle_force_sub(bot: Client, cmd: Message):
-    try:
-        user = bot.get_chat_member(chat_id=-1001713795228,
-                                         user_id=cmd.from_user.id)
-        if user.status in (ChatMemberStatus.BANNED,
-                           ChatMemberStatus.RESTRICTED):
-             cmd.reply_text(
-                text=
-                "Sorry, You are Banned to use me. Contact my [Support Group](https://t.me/greymatters_bots_discussion).",
-                disable_web_page_preview=True,
-            )
-         
-    except UserNotParticipant:
-        try:
-             cmd.reply_text(
-                text="**Please Join My Updates Channel to use me!**\n\n"
-                "Due to Overload, Only Channel Subscribers can use the Bot!",
-                reply_markup=InlineKeyboardMarkup([
-                    [
-                        InlineKeyboardButton(
-                            "🤖 Join Updates Channel",
-                            url="t.me/GreyMatter_Bots",
-                        )
-                    ],
-                ]),
-            )
-       
+   
 
 # help command
 @app.on_message(filters.command(["help"]))
