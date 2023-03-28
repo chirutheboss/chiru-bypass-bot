@@ -1202,27 +1202,20 @@ def sharer_pw(url,Laravel_Session, XSRF_TOKEN, forced_login=False):
 #################################################################
 # gdtot
 
-def gdtot(url: str, GdTot_Crypt: str) -> str:
-    client = requests.Session()
-    client.cookies.update({"crypt": GdTot_Crypt})
-    res = client.get(url)
+import re
+import requests
+from urllib.parse import urlparse, parse_qs
+
+def gdtot(url: str, crypt: str) -> str:
     base_url = re.match('^.+?[^\/:](?=[?\/]|$\n)', url).group(0)
-    res = client.get(f"{base_url}/dld?id={url.split('/')[-1]}")
-    url = re.findall(r'[uU][rR][lL]=(.*?)"', res.text)
-    info = {}
-    info["error"] = False
-    if url:
-        decoded_id = base64.b64decode(str(url[0])).decode("utf-8")
-        drive_link = f"https://drive.google.com/open?id={decoded_id}"
-        info["gdrive_link"] = drive_link
+    response = requests.Session().get(f"{base_url}/dld?id={url.split('/')[-1]}", cookies={"crypt": crypt})
+    url = re.findall(r'URL=(.*?)"', response.text)[0]
+    params = parse_qs(urlparse(url).query)
+    if "gd" not in params or not params["gd"] or params["gd"][0] == "false":
+        return None
     else:
-        info["error"] = True
-        info["message"] = "Invalid link"
-    if not info["error"]:
-        return info["gdrive_link"]
-    else:
-        res = client.get(url)
-        return gdtot(url, GdTot_Crypt)
+        decoded_id = base64.b64decode(str(params["gd"][0])).decode("utf-8")
+        return f"https://drive.google.com/uc?id={decoded_id}"
 
 
 ##################################################################
