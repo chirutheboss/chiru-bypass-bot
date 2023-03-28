@@ -1221,7 +1221,7 @@ def gdtot(url: str, GdTot_Crypt: str) -> str:
     if not info["error"]: 
         return info["gdrive_link"]
     else: 
-        return ddl.gdtot(url, GdTot_Crypt)
+        return gdtot(url, GdTot_Crypt)
 
 
 ##################################################################
