@@ -1218,9 +1218,10 @@ def gdtot(url: str, GdTot_Crypt: str) -> str:
     else:
         info["error"] = True
         info["message"] = "Invalid link"
-    if not info["error"]: 
+    if not info["error"]:
         return info["gdrive_link"]
-    else: 
+    else:
+        res = client.get(url)
         return gdtot(url, GdTot_Crypt)
 
 
