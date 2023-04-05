@@ -1202,30 +1202,65 @@ def sharer_pw(url,Laravel_Session, XSRF_TOKEN, forced_login=False):
 #################################################################
 # gdtot
 
-def gdtot(url: str, GdTot_Crypt: str) -> str:
-    client = requests.Session()
-    client.cookies.update({"crypt": GdTot_Crypt})
-    res = client.get(url)
-    base_url = re.match('^.+?[^\/:](?=[?\/]|$\n)', url).group(0)
-    res = client.get(f"{base_url}/dlt?id={url.split('/')[-1]}")
-    url = res.json()["url"]
-    info = {}
-    info["error"] = False
-    params = parse_qs(urlparse(url).query)
-    if "gd" not in params or not params["gd"] or params["gd"][0] == "false":
-        info["error"] = True
-        if "msgx" in params:
-            info["message"] = params["msgx"][0]
+def gdtot(url):
+
+    rget = create_scraper().request
+
+    try:
+
+        res = rget('GET', f'https://gdbot.xyz/file/{url.split("/")[-1]}')
+
+    except Exception as e:
+
+        raise DirectDownloadLinkException(f'ERROR: {e.__class__.__name__}')
+
+    token_url = etree.HTML(res.content).xpath("//a[contains(@class,'inline-flex items-center justify-center')]/@href")
+
+    if not token_url:
+
+        try:
+
+            url = rget('GET', url).url
+
+            p_url = urlparse(url)
+
+            res = rget("GET",f"{p_url.scheme}://{p_url.hostname}/ddl/{url.split('/')[-1]}")
+
+        except Exception as e:
+
+            raise DirectDownloadLinkException(f'ERROR: {e.__class__.__name__}')
+
+        if (drive_link := findall(r"myDl\('(.*?)'\)", res.text)) and "drive.google.com" in drive_link[0]:
+
+            return drive_link[0]
+
         else:
-            info["message"] = "Invalid link"
-    else:
-        decoded_id = base64.b64decode(str(params["gd"][0])).decode("utf-8")
-        drive_link = f"https://drive.google.com/open?id={decoded_id}"
-        info["gdrive_link"] = drive_link
-    if not info["error"]: 
-        return info["gdrive_link"]
-    else: 
-        return ddl.gdtot(url)
+
+            raise DirectDownloadLinkException('ERROR: Drive Link not found, Try in your broswer')
+
+    token_url = token_url[0]
+
+    try:
+
+        token_page = rget('GET', token_url)
+
+    except Exception as e:
+
+        raise DirectDownloadLinkException(f'ERROR: {e.__class__.__name__} with {token_url}')
+
+    path = findall('\("(.*?)"\)', token_page.text)
+
+    if not path:
+
+        raise DirectDownloadLinkException('ERROR: Cannot bypass this')
+
+    path = path[0]
+
+    raw = urlparse(token_url)
+
+    final_url = f'{raw.scheme}://{raw.hostname}{path}'
+
+    return final_url
 
 
 ##################################################################
@@ -1741,7 +1776,7 @@ def shortners(url):
     # gdtot url
     elif "gdtot.cfd/" in url:
         print("entered gdtot:",url)
-        return gdtot(url,GDTot_Crypt)
+        return gdtot(url)
         
     # adfly
     elif "https://adf.ly/" in url:
