@@ -969,7 +969,7 @@ def shortingly(url):
 # Gyanilinks - gtlinks.me
 
 def gyanilinks(url):
-    DOMAIN = "https://tech.hipsonyc.com"
+    DOMAIN = "https://tinyurl.com"
     client = cloudscraper.create_scraper(allow_brotli=False)
     url = url[:-1] if url[-1] == '/' else url
     code = url.split("/")[-1]
